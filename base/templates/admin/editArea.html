@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>Edit Area</title>
+    <!-- General CSS Files -->
+    <link rel="stylesheet" href="../../static/adminResources/css/app.min.css">
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="../../static/adminResources/css/style.css">
+    <link rel="stylesheet" href="../../static/adminResources/css/components.css">
+    <!-- Custom style CSS -->
+    <link rel="stylesheet" href="../../static/adminResources/css/custom.css">
+    <link rel='shortcut icon' type='image/x-icon' href='../../static/adminResources/image/logo3.png'/>
+    <script type="text/javascript">
+        function city_ajax() {
+
+            var ajax = new XMLHttpRequest();
+            var option = document.createElement("option");
+            var state_id = document.getElementById("areaStateId");
+            var city_id = document.getElementById("areaCityId");
+
+            $('#areaCityId').empty();
+            option.value = null;
+            option.text = "Select city";
+            option.disabled = true;
+            option.selected = true;
+            city_id.options.add(option);
+
+            ajax.onreadystatechange = function () {
+                if (ajax.readyState == 4) {
+                    var json = JSON.parse(ajax.responseText);
+                    for (var i = 0; i < json.length; i++) {
+                        option = document.createElement("option");
+
+                        option.value = json[i].city_id;
+                        option.text = json[i].city_name;
+
+                        city_id.options.add(option);
+                    }
+                }
+            }
+            ajax.open("get", "/admin/ajax_area_city?stateId=" + state_id.value, true);
+            ajax.send();
+        }
+    </script>
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <div class="navbar-bg"></div>
+        {% include 'admin/header.html' %}
+        {% include 'admin/menu.html' %}
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                <div class="section-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <form action="/admin/update_area" method="post">
+                                    <div class="card-header">
+                                        <h4>Edit Area</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <input type="hidden" name="areaId"
+                                                   value="{{ area_vo_list[0].area_id }}">
+                                            <select class="form-control" id="areaStateId" name="stateId"
+                                                    onchange="city_ajax()" required>
+                                                <option value disabled selected>State Name</option>
+                                                {% for state in state_vo_list %}
+                                                    <option value="{{ state.state_id }}"
+                                                            {% if state.state_id == area_vo_list[0].area_state_id %}
+                                                            selected {% endif %}>{{ state.state_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select class="form-control" id="areaCityId" name="cityId" required>
+                                                <option value disabled selected>City Name</option>
+                                                {% for city in city_vo_list %}
+                                                    <option value="{{ city.city_id }}"
+                                                            {% if city.city_id == area_vo_list[0].area_city_id %}
+                                                            selected {% endif %}>{{ city.city_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Area Name</label>
+                                            <input type="text" value="{{ area_vo_list[0].area_name }}" name="areaName"
+                                                   class="form-control" required="">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Area Pincode</label>
+                                            <input type="number" value="{{ area_vo_list[0].area_pincode }}"
+                                                   name="areaPincode" class="form-control" required="">
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        {% include 'admin/footer.html' %}
+    </div>
+</div>
+<!-- General JS Scripts -->
+<script src="../../static/adminResources/js/app.min.js"></script>
+<!-- JS Libraies -->
+<!-- Page Specific JS File -->
+<!-- Template JS File -->
+<script src="../../static/adminResources/js/scripts.js"></script>
+<!-- Custom JS File -->
+<script src="../../static/adminResources/js/custom.js"></script>
+<script>
+    $(document).ready(function () {
+        iziToast.error({
+            title: 'Hello, world!',
+            message: 'This awesome plugin is made by iziToast',
+            position: 'topRight'
+        });
+    });
+</script>
+</body>
+
+</html>
